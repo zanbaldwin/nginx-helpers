@@ -1,0 +1,13 @@
+index index.php index.html;
+
+location / {
+    try_files $uri $uri/ /index.php$is_args$args =404;
+}
+
+location ~ \.(css|js)$ {
+    gzip on;
+}
+
+include helpers/global_restrictions;
+include helpers/no_log_assets;
+include helpers/engines/php;
