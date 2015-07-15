@@ -1,0 +1,27 @@
+server {
+	listen 762 ssl;
+	# This should be the main domain (hostname) of the server, however if it makes more sense to use a specific domain,
+	# use that instead.
+	server_name {$server_root_domain_name};
+	server_tokens off;
+
+	error_log /home/webserver/.logs/phpmyadmin.error.log;
+	access_log /home/webserver/.logs/phpmyadmin.access.log;
+
+	# If you are going to use phpMyAdmin then you *MUST* use SSL! If you don't your MySQL passwords are going to be sent
+	# over the internet, unencrypted, for anyone to see and log directory into your databases to copy, edit or delete!
+	include generic_ssl;
+	ssl_certificate /etc/ssl/private/chained/{$server_root_domain_name}.crt;
+	ssl_certificate_key /etc/ssl/private/{$server_root_domain_name}.key;
+
+	root {$absolute_path_to_phpmyadmin_directory};
+	index index.php;
+
+	location / {
+		try_files $uri $uri/ /index.php$is_args$args;
+	}
+
+	include helpers/global_restrictions;
+	include helpers/no_log_assets;
+	include helpers/php;
+}

@@ -1,0 +1,30 @@
+server {
+    listen 80;
+    server_name www.{$root_domain_name};
+    server_tokens off;
+    return 307 http://{$root_domain_name}$request_uri;
+}
+
+server {
+    listen 80;
+    server_name {$root_domain_name}
+    server_tokens off;
+
+    error_log /home/webserver/.logs/{$root_domain_name}.error.log;
+    access_log /home/webserver/.logs/{$root_domain_name}.access.log;
+
+    root /home/webserver/{$root_domain_name};
+    index {$entry_script};
+
+    location / {
+        try_files $uri $uri/ /{$entry_script}$is_args$args;
+    }
+
+    location ~ \.(css|js)$ {
+        gzip on;
+    }
+
+    include helpers/global_restrictions;
+    include helpers/no_log_assets;
+    include helpers/php;
+}

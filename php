@@ -1,0 +1,13 @@
+# Pass all PHP files onto PHP's Fast Process Manager server.
+location ~ [^/]\.php(/|\?|$) {
+	fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+	if (!-f $document_root$fastcgi_script_name) {
+		return 404;
+	}
+	try_files $uri $fastcgi_script_name =404;
+	fastcgi_index index.php;
+	include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	fastcgi_pass phpfpm;
+}
+
