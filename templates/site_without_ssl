@@ -1,30 +1,36 @@
 server {
-	listen 80;
-	server_name www.{$root_domain_name};
-	server_tokens off;
-	return 307 http://{$root_domain_name}$request_uri;
+	listen 				80;
+	server_name 		www.{$root_domain_name};
+	server_tokens 		off;
+	return 				307 http://{$root_domain_name}$request_uri;
 }
 
 server {
-	listen 80;
-	server_name {$root_domain_name}
-	server_tokens off;
+	listen 				80;
+	server_name 		{$root_domain_name}
+	server_tokens 		off;
 
-	error_log /home/webserver/.logs/{$root_domain_name}.error.log;
-	access_log /home/webserver/.logs/{$root_domain_name}.access.log;
+	error_log 			/home/webserver/.logs/{$root_domain_name}.error.log;
+	access_log 			/home/webserver/.logs/{$root_domain_name}.access.log;
 
 	# Don't forget that some web applications might require something like
 	# "/home/webserver/{$root_domain_name}/public_html" (for example, Symfony
 	# uses the "web" sub-directory).
-	root /home/webserver/{$root_domain_name};
+	root 				/home/webserver/{$root_domain_name};
+
+	# This option is the maximum data allowed in a POST (or POST-related such as
+	# PATCH) request. If you expect to recieve file uploads bigger than this,
+	# increase the setting to something higher.
+	client_max_body_size 5M;
 
 	# The following demonstrates how you could have a sub-directory point to a
 	# location, separate from the main application.
 	# location /subdir/ {
 	#     # Override the webroot directory.
-	#     root /path/to/another/application;
+	#     root 			/path/to/another/application;
 	# }
 
-	# Currently, options are: "basic_php", "symfony", and "wordpress".
-	include helpers/basic_php;
+	# Options are "basic_php" (for stuff like Wordpress, Chaser, etc) and
+	# "symfony" (advanced configuration for Symfony applications).
+	include 			helpers/basic_php;
 }
