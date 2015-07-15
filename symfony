@@ -1,0 +1,15 @@
+# Strip away the "app.php/" prefix if it is present.
+rewrite ^/app\.php/?(.*)$ /$1 permanent;
+
+location / {
+    index app.php;
+    try_files $uri $uri/ @rewriteapp;
+}
+
+location @rewriteapp {
+    rewrite ^(.*)$ /app.php/$1 last;
+}
+
+include helpers/global_restrictions;
+include helpers/no_log_assets;
+include helpers/engines/php;

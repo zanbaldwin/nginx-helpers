@@ -1,30 +1,30 @@
 server {
-    listen 80;
-    server_name www.{$root_domain_name};
-    server_tokens off;
-    return 307 http://{$root_domain_name}$request_uri;
+	listen 80;
+	server_name www.{$root_domain_name};
+	server_tokens off;
+	return 307 http://{$root_domain_name}$request_uri;
 }
 
 server {
-    listen 80;
-    server_name {$root_domain_name}
-    server_tokens off;
+	listen 80;
+	server_name {$root_domain_name}
+	server_tokens off;
 
-    error_log /home/webserver/.logs/{$root_domain_name}.error.log;
-    access_log /home/webserver/.logs/{$root_domain_name}.access.log;
+	error_log /home/webserver/.logs/{$root_domain_name}.error.log;
+	access_log /home/webserver/.logs/{$root_domain_name}.access.log;
 
-    root /home/webserver/{$root_domain_name};
-    index {$entry_script};
+	# Don't forget that some web applications might require something like
+	# "/home/webserver/{$root_domain_name}/public_html" (for example, Symfony
+	# uses the "web" sub-directory).
+	root /home/webserver/{$root_domain_name};
 
-    location / {
-        try_files $uri $uri/ /{$entry_script}$is_args$args;
-    }
+	# The following demonstrates how you could have a sub-directory point to a
+	# location, separate from the main application.
+	# location /subdir/ {
+	#     # Override the webroot directory.
+	#     root /path/to/another/application;
+	# }
 
-    location ~ \.(css|js)$ {
-        gzip on;
-    }
-
-    include helpers/global_restrictions;
-    include helpers/no_log_assets;
-    include helpers/php;
+	# Currently, options are: "basic_php", "symfony", and "wordpress".
+	include helpers/basic_php;
 }
