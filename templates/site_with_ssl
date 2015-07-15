@@ -1,36 +1,37 @@
 server {
 	listen 				80;
-	server_name 		{$root_domain_name} www.{$root_domain_name};
+	server_name 		{$domain_name} www.{$domain_name};
 	server_tokens 		off;
-	return 				307 https://{$root_domain_name}$request_uri;
+	return 				307 https://{$domain_name}$request_uri;
 }
 
 server {
 	listen 				443 ssl;
-	server_name 		www.{$root_domain_name};
+	server_name 		www.{$domain_name};
 	server_tokens 		off;
 	include 			helpers/ssl;
-	ssl_certificate 	/etc/ssl/private/{$root_domain_name}.crt;
-	ssl_certificate_key /etc/ssl/private/{$root_domain_name}.key;
-	return 				307 https://{$root_domain_name}$request_uri;
+	ssl_certificate 	/etc/ssl/private/{$domain_name}.crt;
+	ssl_certificate_key /etc/ssl/private/{$domain_name}.key;
+	return 				307 https://{$domain_name}$request_uri;
 }
 
 server {
 	listen 				443 ssl;
-	server_name 		{$root_domain_name}
+	server_name 		{$domain_name}
 	server_tokens 		off;
 
-	error_log 			/home/webserver/.logs/{$root_domain_name}.error.log;
-	access_log 			/home/webserver/.logs/{$root_domain_name}.access.log;
+	error_log 			/home/webserver/.logs/{$domain_name}.error.log;
+	access_log 			/home/webserver/.logs/{$domain_name}.access.log;
 
 	include 			helpers/ssl;
-	ssl_certificate 	/etc/ssl/private/{$root_domain_name}.crt;
-	ssl_certificate_key /etc/ssl/private/{$root_domain_name}.key;
+	ssl_certificate 	/etc/ssl/private/{$domain_name}.crt;
+	ssl_certificate_key /etc/ssl/private/{$domain_name}.key;
+	fastcgi_param 		HTTPS $https if_not_empty;
 
 	# Don't forget that some web applications might require something like
-	# "/home/webserver/{$root_domain_name}/public_html" (for example, Symfony
+	# "/home/webserver/{$domain_name}/public_html" (for example, Symfony
 	# uses the "web" sub-directory instead of "public_html").
-	root 				/home/webserver/{$root_domain_name};
+	root 				/home/webserver/{$domain_name};
 
 	# This option is the maximum data allowed in a POST (or POST-related such as
 	# PATCH) request. If you expect to recieve file uploads bigger than this,
