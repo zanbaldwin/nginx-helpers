@@ -1,5 +1,5 @@
 # Pass all PHP and Hack files onto the HipHop Virtual Machine.
-location ~ [^/]\.(?:php|hh)(/|\?|$) {
+location ~ [^/]\.php(/|\?|$) {
 	fastcgi_split_path_info ^(.+?\.(?:php|hh))(\.*)$;
 	if (!-f $document_root$fastcgi_script_name) {
 		return 404;
