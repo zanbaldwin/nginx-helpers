@@ -1,28 +1,9 @@
-# # Strip away the "app.php/" prefix if it is present.
-# rewrite ^/app\.php/?(.*)$ /$1 permanent;
-
-# location ~ ^/app\.php(/|$) {
-# 	# Prevents URIs that include the front controller (i.e.,
-# 	# "http://domain.tld/app.php/some-path" will 404). Remove the following line
-# 	# ("internal;") to allow this kind of behaviour.
-# 	internal;
-# }
+index app.php;
 
 location / {
-    try_files $uri $uri/ /app.php$is_args$args;
+    try_files $uri $uri/ /app.php$is_args$args =404;
 }
 
 include helpers/global_restrictions;
 include helpers/no_log_assets;
-
-# Pass all PHP files onto PHP's Fast Process Manager server.
-location ~ [^/]\.php(/|\?|$) {
-    fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-    if (!-f $document_root$fastcgi_script_name) {
-        return 404;
-    }
-    try_files $uri $fastcgi_script_name =404;
-    fastcgi_index app.php;
-    include fastcgi_params;
-    fastcgi_pass phpfpm;
-}
+include helpers/engines/php;
