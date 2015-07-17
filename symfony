@@ -1,13 +1,21 @@
+index app.php;
+
 # Strip away the "app.php/" prefix if it is present.
 rewrite ^/app\.php/?(.*)$ /$1 permanent;
 
-location / {
-    index app.php;
-    try_files $uri $uri/ @rewriteapp;
+location ~ ^/app\.php(/|$) {
+	# Prevents URIs that include the front controller (i.e.,
+	# "http://domain.tld/app.php/some-path" will 404). Remove the following line
+	# ("internal;") to allow this kind of behaviour.
+	internal;
 }
 
 location @rewriteapp {
-    rewrite ^(.*)$ /app.php/$1 last;
+	rewrite ^(.*)$ /app.php/$1 last;
+}
+
+location / {
+	try_files $uri $uri/ @rewriteapp =404;
 }
 
 include helpers/global_restrictions;
